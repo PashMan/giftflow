@@ -31,10 +31,7 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 WEB_SERVER_PORT = int(os.getenv("PORT", 8080))
 
 # Исправление ссылки (asyncpg не любит postgresql://, но Render дает именно её)
-# Мы оставляем как есть, asyncpg умный, но если будут проблемы - раскомментируй строку ниже:
-if DATABASE_URL and DATABASE_URL.startswith("postgresql://"):
-    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://")
-
+# Мы оставляем как есть, asyncpg умный, но если будут проблемы - раскомментируй строку ниже
 CPA_CONFIG = {
     'aliexpress.ru': 'https://rzekl.com/g/YOUR_ALI_CODE/?ulp=',
     'aliexpress.com': 'https://rzekl.com/g/YOUR_ALI_CODE/?ulp=',
