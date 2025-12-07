@@ -1,0 +1,249 @@
+/*
+ * GiftFlow Mini App - Полные стили
+ * Оригинальный код пользователя + стили для вишлиста
+ */
+
+:root {
+    /* Используем переменные темы Telegram для лучшей интеграции */
+    --main-bg-color: var(--tg-theme-bg-color, #1E1E2D);
+    --card-bg-color: var(--tg-theme-secondary-bg-color, #2A2A4A);
+    --text-color: var(--tg-theme-text-color, #FFFFFF);
+    --secondary-text-color: var(--tg-theme-hint-color, #AAAAAA);
+    --accent-color: var(--tg-theme-button-color, #6a5acd);
+    --accent-text-color: var(--tg-theme-button-text-color, #ffffff);
+    --success-color: #4CAF50;
+    --border-color: #38384f;
+    --input-bg: #222; /* Цвет фона для инпутов */
+}
+
+body {
+    background-color: var(--main-bg-color);
+    color: var(--text-color);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    padding-bottom: 70px; /* Место для нижнего меню */
+}
+
+/* --- Хедер --- */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: var(--card-bg-color);
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--accent-color);
+}
+
+.menu-icon { font-size: 20px; cursor: pointer; }
+
+.container { padding: 15px; }
+
+/* --- Вкладки --- */
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.tab-button {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    background: none;
+    color: var(--secondary-text-color);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tab-button.active {
+    background: var(--accent-color);
+    color: var(--accent-text-color);
+    border: none;
+}
+
+/* --- Блоки контента --- */
+.content-block, .quick-collect {
+    background: var(--card-bg-color);
+    padding: 20px;
+    border-radius: 16px; /* Немного больше закругление для карточек */
+    margin-bottom: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+h3, h2 { margin-top: 0; color: var(--text-color); }
+
+/* --- Инпуты и кнопки (Глобальные стили) --- */
+input, select, textarea {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid var(--border-color);
+    background: var(--input-bg);
+    color: var(--text-color);
+    border-radius: 12px; /* Закругленные углы для всех полей */
+    box-sizing: border-box; /* Важно: чтобы padding не ломал ширину */
+    margin-bottom: 15px;
+    outline: none;
+    font-family: inherit;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: var(--accent-color);
+}
+
+/* Убираем стандартную стрелку селекта */
+.select-chat-bar select {
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23AAAAAA' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+}
+
+.collect-btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px; /* Закругленные кнопки */
+    background-color: var(--accent-color);
+    color: var(--accent-text-color);
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.collect-btn:hover { opacity: 0.9; }
+.collect-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* --- Прогресс-бар --- */
+.progress-bar {
+    height: 8px;
+    background: #333;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+/* --- Стилизация загрузки файла --- */
+
+/* Скрываем настоящий инпут */
+input[type="file"]#image-upload-input {
+    display: none;
+}
+
+/* Стилизуем лейбл как красивую кнопку */
+.custom-file-upload {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 20px;
+    cursor: pointer;
+    background-color: var(--input-bg);
+    color: var(--secondary-text-color);
+    border: 1px dashed var(--border-color); /* Пунктирная рамка */
+    border-radius: 12px;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: all 0.3s;
+    margin-bottom: 10px;
+}
+
+.custom-file-upload:hover {
+    background-color: var(--border-color);
+    border-color: var(--accent-color);
+    color: var(--text-color);
+}
+
+.custom-file-upload i {
+    margin-right: 10px;
+    font-size: 18px;
+    color: var(--accent-color);
+}
+
+/* --- 🔥 НОВЫЕ СТИЛИ ДЛЯ ССЫЛОК В ВИШЛИСТЕ 🔥 --- */
+.wishlist-link {
+    color: var(--accent-color); /* Фиолетовый цвет текста */
+    text-decoration: none;
+    font-weight: 500;
+    background: rgba(106, 90, 205, 0.15); /* Полупрозрачный фиолетовый фон */
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    display: inline-flex; /* Чтобы иконка и текст были на одной линии */
+    align-items: center;
+    margin: 2px 0;
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.wishlist-link:hover {
+    background: rgba(106, 90, 205, 0.25);
+    text-decoration: none;
+}
+
+.wishlist-link i {
+    font-size: 0.9em;
+    margin-right: 6px;
+    opacity: 0.8;
+}
+/* ------------------------------------------------ */
+
+/* --- Нижнее меню --- */
+.footer-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: var(--card-bg-color);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid var(--border-color);
+    z-index: 100;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--secondary-text-color);
+    font-size: 11px;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.nav-item.active { color: var(--accent-color); }
+.nav-item i { font-size: 22px; margin-bottom: 4px; }
+
+/* Утилиты */
+.text-center { text-align: center; }
+.text-xs { font-size: 12px; }
+.mb-2 { margin-bottom: 10px; }
+
+.screen-content { display: none; }
+
+/* --- Дополнение для нижнего меню --- */
+
+/* Стиль для активного пункта нижнего меню */
+.footer-nav .nav-item.active {
+    color: var(--accent-color);
+}
+
+/* Небольшая анимация иконки при активации */
+.footer-nav .nav-item.active i {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+}

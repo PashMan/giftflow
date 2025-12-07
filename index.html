@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GiftFlow</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="header">
+        <div class="logo">GiftFlow</div>
+    </div>
+
+    <div class="container" style="padding-bottom: 80px;">
+        
+        <div class="tabs top-tabs">
+            <button class="tab-button active tab-switcher" data-view="home">Сборы</button>
+            <button class="tab-button tab-switcher" data-view="santa">Тайный Санта</button>
+        </div>
+
+        <div id="view-home" class="main-view">
+            <div id="section-quick-collect" class="sub-section">
+                <div class="quick-collect content-block">
+                    <h3>Быстрый сбор</h3>
+                    <div class="select-chat-bar">
+                        <select id="collect-chat-select"><option disabled selected>Загрузка...</option></select>
+                    </div>
+                    <input type="number" id="collect-amount" placeholder="Сумма (например, 5000)" required>
+                    <input type="text" id="collect-goal" placeholder="Цель (например, ДР)" required>
+                    <button class="collect-btn" onclick="sendQuickCollect()">Создать сбор</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-mycolls" class="main-view" style="display: none;">
+            <div id="section-my-colls" class="sub-section">
+                <h4 style="margin-bottom: 10px; color: var(--accent-color);">Созданные мной</h4>
+                <div id="list-created" class="collections-list">
+                    <p class="text-center" style="color: gray;">Загрузка...</p>
+                </div>
+                <h4 style="margin-top: 25px; margin-bottom: 10px; color: var(--accent-color);">В которых участвую</h4>
+                <div id="list-participated" class="collections-list">
+                    <p class="text-center" style="color: gray;">Загрузка...</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-santa" class="main-view" style="display: none;">
+            <div id="santa-start-screen" class="text-center content-block">
+                <h2>🎅 Тайный Санта</h2>
+                <p style="color: #aaa; margin-bottom: 25px;">Устройте праздник! Создайте игру, пригласите друзей, а бот решит, кто кому дарит подарок.</p>
+                <button class="collect-btn" onclick="createSantaGame()" style="background: var(--accent-color);">🎄 Создать игру</button>
+            </div>
+            <div id="santa-lobby-screen" class="content-block" style="display: none;">
+                <h2 id="santa-game-title" class="text-center">Идет набор...</h2>
+                <p class="text-center" style="color: #aaa; margin-bottom: 20px;">Заполните вишлист и ждите начала!</p>
+                <p style="font-weight: bold; margin-bottom: 10px;">👥 Участники (<span id="santa-participants-count">0</span>):</p>
+                <ul id="santa-participants-list" style="text-align: left; background: rgba(255,255,255,0.05); padding: 10px 20px; border-radius: 12px; list-style-type: none; margin-bottom: 20px; max-height: 150px; overflow-y: auto;"></ul>
+                <p style="font-weight: bold; margin-bottom: 10px;">🎁 Мой вишлист:</p>
+                <textarea id="santa-wishlist" rows="4" placeholder="Напишите, что хотите получить в подарок..." style="resize: none;"></textarea>
+                <button class="collect-btn" onclick="saveSantaWishlist()" style="margin-bottom: 20px;">💾 Сохранить вишлист</button>
+                <div id="santa-admin-controls" style="display: none; border-top: 1px solid #333; padding-top: 20px;">
+                    <p style="font-weight: bold; color: var(--accent-color);">👑 Панель организатора:</p>
+                    <button class="collect-btn" onclick="shareSantaLink()" style="background: #444; margin-bottom: 10px;"><i class="fas fa-share-alt"></i> Пригласить</button>
+                    <button class="collect-btn" onclick="startSantaGame()" style="background: var(--success-color);">🎲 Жеребьевка</button>
+                </div>
+            </div>
+            <div id="santa-game-screen" class="content-block" style="display: none;">
+                 <h2 class="text-center">🤫 Ты Тайный Санта!</h2>
+                 <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 16px; margin: 25px 0; text-align: center;">
+                     <p style="color: #aaa;">Ты даришь подарок:</p>
+                     <h3 id="santa-target-name" style="font-size: 24px; color: var(--accent-color);">Участник...</h3>
+                 </div>
+                 <p style="font-weight: bold; margin-bottom: 10px;">🎁 Его вишлист:</p>
+                 <div id="santa-target-wishlist" style="background: #222; padding: 15px; border-radius: 12px; white-space: pre-wrap; font-style: italic; color: #ccc;">Загрузка...</div>
+                 <div id="santa-status-buttons" style="display: flex; gap: 10px; margin-top: 20px;">
+                     <button class="collect-btn" style="flex: 1; background: #ff9800;" onclick="markGiftSent()">🚚 Отправил</button>
+                     <button class="collect-btn" style="flex: 1; background: #4caf50;" onclick="markGiftReceived()">🎉 Получил</button>
+                 </div>
+            </div>
+        </div>
+
+        <div id="collection-details" class="content-block" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 200; margin: 0; border-radius: 0; overflow-y: auto; padding-bottom: 80px;">
+             <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                <span onclick="closeDetails()" style="cursor: pointer; color: var(--secondary-text-color); font-size: 18px;"><i class="fas fa-times"></i> Закрыть</span>
+                <span id="edit-btn-container" style="display: none;">
+                    <button onclick="enableEditMode()" style="background: none; border: none; color: var(--accent-color); font-weight: bold; cursor: pointer;"><i class="fas fa-pen"></i> Ред.</button>
+                </span>
+            </div>
+            <div id="view-controls">
+                <div class="text-center" style="margin-bottom: 20px;"><img id="detail-img" src="" style="width: 100%; max-height: 250px; object-fit: cover; border-radius: 12px;"></div>
+                <h2 id="detail-goal" class="text-center" style="margin-bottom: 10px;"></h2>
+                <p id="detail-desc" class="text-center" style="color: var(--secondary-text-color); margin-bottom: 20px; white-space: pre-wrap;"></p>
+                <div class="progress-bar" style="margin-bottom: 10px;"><div id="detail-progress" style="width: 0%; height: 100%; background: var(--success-color); transition: all 0.5s ease;"></div></div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 25px; font-weight: bold;"><span id="detail-current">0 ⭐</span><span id="detail-total">из 0 ⭐</span></div>
+                <div id="payment-control-block" style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px;">
+                    <input type="number" placeholder="Количество звёзд (⭐)" id="contribute-input" min="1">
+                    <button class="collect-btn" onclick="initiatePayment()" style="background: linear-gradient(45deg, #FFD700, #FFA500); color: black;"><i class="fas fa-star"></i> Оплатить</button>
+                </div>
+                <div id="finished-message" style="display: none; background: linear-gradient(135deg, #FFD700, #FFA500); color: black; padding: 20px; border-radius: 12px; text-align: center;">
+                    <i class="fas fa-trophy" style="font-size: 40px;"></i><h3>Сбор завершен!</h3>
+                </div>
+            </div>
+            
+            <div id="edit-controls" style="display: none;">
+                <h3 class="text-center">Редактирование</h3>
+                <label for="image-upload-input" class="custom-file-upload"><i class="fas fa-cloud-upload-alt"></i><span>Выберите фото...</span></label>
+                <input type="file" id="image-upload-input" accept="image/*"><input type="hidden" id="detail-img-url-hidden">
+                <p id="upload-status" class="text-center text-xs" style="color: gray; height: 20px;"></p>
+                <textarea id="detail-desc-input" rows="5" placeholder="Описание..." style="resize: none;"></textarea>
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="collect-btn" id="save-btn" onclick="saveChanges()" style="background-color: var(--success-color); flex: 2;">Сохранить</button>
+                    <button class="collect-btn" onclick="closeDetails()" style="background-color: #444; flex: 1;">Отмена</button>
+                </div>
+                
+                <button class="collect-btn" onclick="deleteCollection()" style="background-color: #ff3333; margin-top: 15px; width: 100%;"><i class="fas fa-trash-alt"></i> Удалить сбор</button>
+            </div>
+        </div>
+
+    </div> <div class="footer-nav" id="main-footer">
+        <div class="nav-item tab-switcher active" data-view="home">
+            <i class="fas fa-plus-circle"></i><span>Создать</span>
+        </div>
+        <div class="nav-item tab-switcher" data-view="mycolls">
+            <i class="fas fa-list-ul"></i><span>Мои сборы</span>
+        </div>
+        <div class="nav-item" data-nav="profile">
+            <i class="fas fa-user"></i><span>Профиль</span>
+        </div>
+    </div>
+
+    <script src="script.js?v=FIXED_NAMES_V1"></script>
+
+</body>
+</html>
